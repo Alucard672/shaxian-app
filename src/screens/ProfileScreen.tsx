@@ -1,0 +1,102 @@
+import React from 'react';
+import { View, Text, StyleSheet, Pressable, Alert, ScrollView } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useNavigation } from '@react-navigation/native';
+import { colors, fontMono } from '@/theme';
+import { useAuth } from '@/store/useAuth';
+
+export function ProfileScreen() {
+  const nav = useNavigation<any>();
+  const session = useAuth(s => s.session);
+  const doLogout = useAuth(s => s.logout);
+
+  const menuGroups: { l: string; r?: string; nav?: string }[][] = [
+    [
+      { l: '采购单', nav: 'Purchases' },
+      { l: '供应商对账', nav: 'Suppliers' },
+      { l: '销售报表', nav: 'Report' },
+    ],
+    [
+      { l: '打印模板' },
+      { l: '库存预警' },
+      { l: '员工管理' },
+    ],
+    [
+      { l: '系统设置' },
+      { l: '关于纱线通', r: 'v2.4.1' },
+    ],
+  ];
+
+  return (
+    <SafeAreaView style={{ flex: 1, backgroundColor: colors.paper }} edges={['top']}>
+      <ScrollView contentContainerStyle={{ paddingBottom: 40 }}>
+        <View style={styles.profileCard}>
+          <View style={styles.avatar}>
+            <Text style={styles.avatarText}>{session?.username?.[0] ?? '李'}</Text>
+          </View>
+          <View style={{ flex: 1 }}>
+            <Text style={styles.name}>{session?.username || '李总'} · 老板</Text>
+            <Text style={styles.phone}>{session?.phone ?? ''}</Text>
+            <Text style={styles.tenant}>{session?.tenantName ?? ''} · {session?.tenantCode ?? ''}</Text>
+          </View>
+        </View>
+
+        {menuGroups.map((grp, gi) => (
+          <View key={gi} style={styles.group}>
+            {grp.map((item, i) => (
+              <Pressable key={item.l}
+                onPress={() => {
+                  if (item.nav) nav.navigate(item.nav);
+                  else Alert.alert(item.l, '功能开发中');
+                }}
+                style={[styles.row, i < grp.length - 1 && styles.rowBorder]}>
+                <Text style={styles.rowLabel}>{item.l}</Text>
+                <View style={{ flex: 1 }} />
+                {item.r && <Text style={styles.rowRight}>{item.r}</Text>}
+                <Text style={styles.chev}>›</Text>
+              </Pressable>
+            ))}
+          </View>
+        ))}
+
+        <Pressable
+          onPress={() => {
+            Alert.alert('退出登录', '确定要退出当前账号吗？', [
+              { text: '取消', style: 'cancel' },
+              { text: '退出', style: 'destructive', onPress: doLogout },
+            ]);
+          }}
+          style={styles.logoutBtn}>
+          <Text style={styles.logoutText}>退出登录</Text>
+        </Pressable>
+      </ScrollView>
+    </SafeAreaView>
+  );
+}
+
+const styles = StyleSheet.create({
+  profileCard: {
+    flexDirection: 'row', alignItems: 'center', gap: 14,
+    backgroundColor: '#fff', margin: 14, padding: 16, borderRadius: 12,
+  },
+  avatar: {
+    width: 54, height: 54, borderRadius: 27,
+    backgroundColor: colors.brand700, justifyContent: 'center', alignItems: 'center',
+  },
+  avatarText: { color: '#fff', fontSize: 22, fontWeight: '600' },
+  name: { fontSize: 17, fontWeight: '600', color: colors.ink900 },
+  phone: { fontSize: 12, color: colors.ink500, fontFamily: fontMono, marginTop: 2 },
+  tenant: { fontSize: 11, color: colors.ink400, marginTop: 4 },
+  group: { backgroundColor: '#fff', marginHorizontal: 14, marginTop: 12, borderRadius: 10 },
+  row: { flexDirection: 'row', alignItems: 'center', paddingVertical: 14, paddingHorizontal: 14 },
+  rowBorder: { borderBottomWidth: 0.5, borderBottomColor: colors.ink50 },
+  rowLabel: { fontSize: 14, color: colors.ink900 },
+  rowRight: { fontSize: 12, color: colors.ink400, marginRight: 8 },
+  chev: { fontSize: 16, color: colors.ink300 },
+  logoutBtn: {
+    marginHorizontal: 14, marginTop: 24, height: 48,
+    backgroundColor: '#fff', borderRadius: 10,
+    justifyContent: 'center', alignItems: 'center',
+  },
+  logoutText: { color: colors.danger, fontSize: 15, fontWeight: '500' },
+});

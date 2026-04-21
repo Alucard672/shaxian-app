@@ -1,0 +1,29 @@
+{
+  "expo": {
+    "name": "纱线通",
+    "slug": "shaxian-mobile-app",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "backgroundColor": "#0a1220",
+      "resizeMode": "contain"
+    },
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.shaxian.erp"
+    },
+    "android": {
+      "package": "com.shaxian.erp",
+      "adaptiveIcon": {
+        "backgroundColor": "#0a1220"
+      }
+    },
+    "web": {
+      "bundler": "metro"
+    },
+    "plugins": ["expo-secure-store"]
+  }
+}
