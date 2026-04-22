@@ -6,6 +6,7 @@ export interface SalesOrder {
   customerId: number;
   customerName: string;
   salesDate: string;
+  createdAt?: string;
   totalAmount: number;
   paidAmount: number;
   unpaidAmount: number;

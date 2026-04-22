@@ -4,13 +4,15 @@ import {
   ActivityIndicator, Pressable,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { colors, fontMono } from '@/theme';
-import { NavBar } from '@/components/NavBar';
+import { NavBar, NavIconButton } from '@/components/NavBar';
 import { Badge } from '@/components/Badge';
 import { listCustomers, Customer } from '@/api/customer';
 import { useAuth } from '@/store/useAuth';
 
 export function CustomersScreen() {
+  const nav = useNavigation<any>();
   const session = useAuth(s => s.session);
   const [items, setItems] = useState<Customer[]>([]);
   const [loading, setLoading] = useState(true);
@@ -31,13 +33,21 @@ export function CustomersScreen() {
   }, [session]);
 
   useEffect(() => { load(); }, [load]);
+  useFocusEffect(useCallback(() => { load(true); }, [load]));
 
   const totalUnpaid = items.reduce((s, c) => s + (c.unpaidAmount ?? 0), 0);
   const unpaidCount = items.filter(c => (c.unpaidAmount ?? 0) > 0).length;
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: colors.paper }} edges={['top']}>
-      <NavBar title="客户对账" sub={`${items.length} 位客户 · 本月`} />
+      <NavBar title="客户对账" sub={`${items.length} 位客户`}
+        back onBack={() => nav.goBack()}
+        right={<>
+          <NavIconButton name="search" />
+          <NavIconButton name="plus" color={colors.brand700}
+            onPress={() => nav.navigate('CustomerForm')} />
+        </>} />
+
 
       <View style={{ paddingHorizontal: 14, marginBottom: 10 }}>
         <View style={styles.summary}>
@@ -66,7 +76,8 @@ export function CustomersScreen() {
             const unpaid = item.unpaidAmount ?? 0;
             const avatarColor = unpaid > 0 ? colors.danger : colors.brand700;
             return (
-              <Pressable style={styles.card}>
+              <Pressable style={styles.card}
+                onPress={() => nav.navigate('CustomerForm', { customer: item })}>
                 <View style={[styles.avatar, { backgroundColor: avatarColor }]}>
                   <Text style={styles.avatarText}>{item.name?.[0] ?? '?'}</Text>
                 </View>

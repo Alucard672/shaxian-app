@@ -6,7 +6,8 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { colors, fontMono } from '@/theme';
-import { NavBar } from '@/components/NavBar';
+import { NavBar, NavIconButton } from '@/components/NavBar';
+import { Icon } from '@/components/Icon';
 import { Badge, Tone } from '@/components/Badge';
 import { Segment } from '@/components/Segment';
 import { listPurchaseOrders, PurchaseOrder } from '@/api/purchase';
@@ -51,11 +52,11 @@ export function PurchasesScreen() {
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: colors.paper }} edges={['top']}>
       <NavBar title="采购单" sub={`本月 ${items.length} 单`}
-        right={
-          <Pressable onPress={() => nav.navigate('NewPurchase')}>
-            <Text style={{ color: colors.brand700, fontSize: 14 }}>+ 新建</Text>
-          </Pressable>
-        } />
+        back onBack={() => nav.goBack()}
+        right={<>
+          <NavIconButton name="search" />
+          <NavIconButton name="plus" color={colors.brand700} onPress={() => nav.navigate('NewPurchase')} />
+        </>} />
 
       <View style={styles.stats}>
         <StatBox label="本月采购额" value={formatMoney(monthTotal)} color={colors.brand700} />

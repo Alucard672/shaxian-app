@@ -6,7 +6,8 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { colors, fontMono } from '@/theme';
-import { NavBar } from '@/components/NavBar';
+import { NavBar, NavIconButton } from '@/components/NavBar';
+import { Icon } from '@/components/Icon';
 import { Badge, Tone } from '@/components/Badge';
 import { Segment } from '@/components/Segment';
 import { listSalesOrders, SalesOrder } from '@/api/sales';
@@ -74,7 +75,11 @@ export function OrdersScreen() {
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: colors.paper }} edges={['top']}>
-      <NavBar title="销售单" sub={`${orders.length}${hasMore ? '+' : ''} 单`} />
+      <NavBar title="销售单" sub={`${orders.length}${hasMore ? '+' : ''} 单`}
+        right={<>
+          <NavIconButton name="search" />
+          <NavIconButton name="filter" />
+        </>} />
 
       <View style={styles.stats}>
         <StatBox label="累计销售额" value={formatMoney(monthTotal)} color={colors.brand700} />
@@ -143,7 +148,7 @@ export function OrdersScreen() {
 
       {/* FAB */}
       <Pressable style={styles.fab} onPress={() => nav.navigate('NewOrder')}>
-        <Text style={styles.fabText}>＋</Text>
+        <Icon name="plus" size={22} color="#fff" strokeWidth={2.4} />
       </Pressable>
     </SafeAreaView>
   );
@@ -183,5 +188,4 @@ const styles = StyleSheet.create({
     shadowColor: colors.brand900, shadowOpacity: 0.4, shadowRadius: 12, shadowOffset: { width: 0, height: 4 },
     elevation: 6,
   },
-  fabText: { color: '#fff', fontSize: 26, fontWeight: '300', marginTop: -2 },
 });

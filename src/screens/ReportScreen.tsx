@@ -5,6 +5,7 @@ import {
 } from 'react-native';
 import Svg, { Path, Defs, LinearGradient as SvgGrad, Stop, Circle } from 'react-native-svg';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useNavigation } from '@react-navigation/native';
 import { colors, fontMono } from '@/theme';
 import { NavBar } from '@/components/NavBar';
 import { useAuth } from '@/store/useAuth';
@@ -25,6 +26,7 @@ function startOfPeriod(p: Period): Date {
 }
 
 export function ReportScreen() {
+  const nav = useNavigation<any>();
   const session = useAuth(s => s.session);
   const [period, setPeriod] = useState<Period>('month');
   const [orders, setOrders] = useState<SalesOrder[]>([]);
@@ -80,7 +82,8 @@ export function ReportScreen() {
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: colors.paper }} edges={['top']}>
-      <NavBar title="销售报表" sub={new Date().toLocaleDateString('zh-CN')} />
+      <NavBar title="销售报表" sub={new Date().toLocaleDateString('zh-CN')}
+        back onBack={() => nav.goBack()} />
 
       <ScrollView contentContainerStyle={{ paddingBottom: 40 }}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => { setRefreshing(true); load(true); }} />}>

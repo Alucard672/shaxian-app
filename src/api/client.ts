@@ -1,12 +1,5 @@
-import { Platform } from 'react-native';
+import { getApiBase } from '@/config/env';
 
-// Backend URL — local dev:
-// iOS simulator can use localhost, Android emulator uses 10.0.2.2
-// For physical device, replace with your LAN IP (e.g. 192.168.1.100)
-const DEFAULT_BASE =
-  Platform.OS === 'android' ? 'http://10.0.2.2:8080' : 'http://localhost:8080';
-
-export const API_BASE = process.env.EXPO_PUBLIC_API_BASE ?? DEFAULT_BASE;
 // All backend controllers sit under /biz/api (see Spring Boot code).
 export const API_PREFIX = '/biz/api';
 
@@ -31,7 +24,7 @@ export async function api<T = any>(
       if (v !== undefined) qs.set(k, String(v));
     }
   }
-  const url = `${API_BASE}${API_PREFIX}${endpoint}${qs.toString() ? `?${qs}` : ''}`;
+  const url = `${getApiBase()}${API_PREFIX}${endpoint}${qs.toString() ? `?${qs}` : ''}`;
   const res = await fetch(url, {
     method,
     headers: {

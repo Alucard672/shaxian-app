@@ -6,7 +6,7 @@ import {
 import { LinearGradient } from 'expo-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { colors, fontMono } from '@/theme';
-import { NavBar } from '@/components/NavBar';
+import { NavBar, NavIconButton } from '@/components/NavBar';
 import { Badge } from '@/components/Badge';
 import { Segment } from '@/components/Segment';
 import { listStock, StockItem } from '@/api/stock';
@@ -43,7 +43,8 @@ export function StockScreen() {
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: colors.paper }} edges={['top']}>
-      <NavBar title="库存管理" sub={`${items.length} 项 · 本仓`} />
+      <NavBar title="库存管理" sub={`${items.length} 项 · 本仓`}
+        right={<><NavIconButton name="search" /><NavIconButton name="filter" /></>} />
 
       <View style={{ paddingHorizontal: 14, marginBottom: 10 }}>
         <LinearGradient

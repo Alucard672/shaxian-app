@@ -4,13 +4,15 @@ import {
   ActivityIndicator, Pressable,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { colors, fontMono } from '@/theme';
-import { NavBar } from '@/components/NavBar';
+import { NavBar, NavIconButton } from '@/components/NavBar';
 import { Badge } from '@/components/Badge';
 import { listSuppliers, Supplier } from '@/api/supplier';
 import { useAuth } from '@/store/useAuth';
 
 export function SuppliersScreen() {
+  const nav = useNavigation<any>();
   const session = useAuth(s => s.session);
   const [items, setItems] = useState<Supplier[]>([]);
   const [loading, setLoading] = useState(true);
@@ -30,13 +32,20 @@ export function SuppliersScreen() {
   }, [session]);
 
   useEffect(() => { load(); }, [load]);
+  useFocusEffect(useCallback(() => { load(true); }, [load]));
 
   const totalUnpaid = items.reduce((s, c) => s + (c.unpaidAmount ?? 0), 0);
   const unpaidCount = items.filter(c => (c.unpaidAmount ?? 0) > 0).length;
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: colors.paper }} edges={['top']}>
-      <NavBar title="供应商对账" sub={`${items.length} 家供应商`} />
+      <NavBar title="供应商对账" sub={`${items.length} 家供应商`}
+        back onBack={() => nav.goBack()}
+        right={<>
+          <NavIconButton name="search" />
+          <NavIconButton name="plus" color={colors.brand700}
+            onPress={() => nav.navigate('SupplierForm')} />
+        </>} />
 
       <View style={{ paddingHorizontal: 14, marginBottom: 10 }}>
         <View style={styles.summary}>
@@ -64,7 +73,8 @@ export function SuppliersScreen() {
           renderItem={({ item }) => {
             const unpaid = item.unpaidAmount ?? 0;
             return (
-              <Pressable style={styles.card}>
+              <Pressable style={styles.card}
+                onPress={() => nav.navigate('SupplierForm', { supplier: item })}>
                 <View style={[styles.avatar, { backgroundColor: unpaid > 0 ? colors.warn : colors.ok }]}>
                   <Text style={styles.avatarText}>{item.name?.[0] ?? '?'}</Text>
                 </View>

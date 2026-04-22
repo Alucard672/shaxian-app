@@ -5,16 +5,32 @@ import { useNavigation } from '@react-navigation/native';
 import { colors, fontMono } from '@/theme';
 import { useAuth } from '@/store/useAuth';
 
+function maskPhone(p?: string) {
+  return p ? `${p.slice(0, 3)}****${p.slice(-4)}` : '';
+}
+function pickName(session: any) {
+  if (session?.username) return session.username;
+  if (session?.tenantName && !/^\d+$/.test(session.tenantName)) return session.tenantName;
+  if (session?.phone) return maskPhone(session.phone);
+  return '未命名用户';
+}
+
 export function ProfileScreen() {
   const nav = useNavigation<any>();
   const session = useAuth(s => s.session);
   const doLogout = useAuth(s => s.logout);
+  const displayName = pickName(session);
 
-  const menuGroups: { l: string; r?: string; nav?: string }[][] = [
+  const menuGroups: { l: string; r?: string; nav?: string; params?: any }[][] = [
     [
       { l: '采购单', nav: 'Purchases' },
-      { l: '供应商对账', nav: 'Suppliers' },
       { l: '销售报表', nav: 'Report' },
+    ],
+    [
+      { l: '客户管理', nav: 'Customers' },
+      { l: '供应商管理', nav: 'Suppliers' },
+      { l: '新增客户', nav: 'CustomerForm' },
+      { l: '新增供应商', nav: 'SupplierForm' },
     ],
     [
       { l: '打印模板' },
@@ -22,6 +38,7 @@ export function ProfileScreen() {
       { l: '员工管理' },
     ],
     [
+      { l: '环境切换', nav: 'EnvPicker' },
       { l: '系统设置' },
       { l: '关于纱线通', r: 'v2.4.1' },
     ],
@@ -32,12 +49,18 @@ export function ProfileScreen() {
       <ScrollView contentContainerStyle={{ paddingBottom: 40 }}>
         <View style={styles.profileCard}>
           <View style={styles.avatar}>
-            <Text style={styles.avatarText}>{session?.username?.[0] ?? '李'}</Text>
+            <Text style={styles.avatarText}>{displayName[0]}</Text>
           </View>
           <View style={{ flex: 1 }}>
-            <Text style={styles.name}>{session?.username || '李总'} · 老板</Text>
+            <Text style={styles.name}>
+              {displayName}
+              {session?.role ? ` · ${session.role}` : ''}
+            </Text>
             <Text style={styles.phone}>{session?.phone ?? ''}</Text>
-            <Text style={styles.tenant}>{session?.tenantName ?? ''} · {session?.tenantCode ?? ''}</Text>
+            <Text style={styles.tenant}>
+              {session?.tenantName ?? ''}
+              {session?.tenantCode ? ` · ${session.tenantCode}` : ''}
+            </Text>
           </View>
         </View>
 

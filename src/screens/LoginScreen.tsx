@@ -5,15 +5,20 @@ import {
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useNavigation } from '@react-navigation/native';
 import { colors, fontMono } from '@/theme';
 import { login } from '@/api/auth';
 import { useAuth } from '@/store/useAuth';
+import { getCurrentEnv, subscribeEnv } from '@/config/env';
 
 export function LoginScreen() {
+  const nav = useNavigation<any>();
   const setSession = useAuth(s => s.setSession);
   const [phone, setPhone] = useState('13800138000');
   const [password, setPassword] = useState('123456');
   const [loading, setLoading] = useState(false);
+  const [env, setEnv] = useState(getCurrentEnv());
+  React.useEffect(() => subscribeEnv(() => setEnv(getCurrentEnv())), []);
 
   const onLogin = async () => {
     if (!phone || !password) {
@@ -39,18 +44,26 @@ export function LoginScreen() {
         style={styles.header}>
         <SafeAreaView edges={['top']}>
           <View style={styles.brand}>
-            <View style={styles.logoBox}>
+            <Pressable
+              style={styles.logoBox}
+              onLongPress={() => nav.navigate('EnvPicker')}
+              delayLongPress={700}>
               <Text style={styles.logoText}>纱</Text>
-            </View>
+            </Pressable>
             <View>
               <Text style={styles.brandName}>纱线通</Text>
               <Text style={styles.brandSub}>YARN ERP · v2.4</Text>
             </View>
             <View style={{ flex: 1 }} />
-            <View style={{ alignItems: 'flex-end' }}>
-              <Text style={styles.statusDot}>● ONLINE</Text>
-              <Text style={styles.statusSub}>萧山仓 · 18ms</Text>
-            </View>
+            <Pressable style={{ alignItems: 'flex-end' }} onPress={() => nav.navigate('EnvPicker')}>
+              <View style={styles.envPill}>
+                <View style={styles.envDot} />
+                <Text style={styles.envText}>{env.customBase ? '自定义' : env.label}环境</Text>
+              </View>
+              <Text style={styles.statusSub} numberOfLines={1}>
+                {(env.customBase ?? env.apiBase).replace(/^https?:\/\//, '')}
+              </Text>
+            </Pressable>
           </View>
 
           <View style={styles.tagline}>
@@ -143,8 +156,14 @@ const styles = StyleSheet.create({
   logoText: { color: '#fff', fontSize: 20, fontWeight: '700' },
   brandName: { color: '#fff', fontSize: 17, fontWeight: '600' },
   brandSub: { color: colors.ink400, fontSize: 10, fontFamily: fontMono, letterSpacing: 1, marginTop: 2 },
-  statusDot: { color: colors.ok, fontSize: 10, fontFamily: fontMono, letterSpacing: 1 },
-  statusSub: { color: colors.ink500, fontSize: 10, fontFamily: fontMono, marginTop: 2 },
+  envPill: {
+    flexDirection: 'row', alignItems: 'center', gap: 4,
+    backgroundColor: 'rgba(84,160,255,0.15)',
+    paddingHorizontal: 8, paddingVertical: 3, borderRadius: 10,
+  },
+  envDot: { width: 5, height: 5, borderRadius: 2.5, backgroundColor: colors.brand400 },
+  envText: { color: colors.brand400, fontSize: 10, fontWeight: '600', fontFamily: fontMono },
+  statusSub: { color: colors.ink500, fontSize: 10, fontFamily: fontMono, marginTop: 3 },
   tagline: { marginTop: 30 },
   taglineMark: { color: colors.brand400, fontSize: 10, fontFamily: fontMono, letterSpacing: 2, marginBottom: 10 },
   taglineHead: { color: '#fff', fontSize: 26, fontWeight: '600', letterSpacing: -0.4, lineHeight: 32 },
