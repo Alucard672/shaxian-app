@@ -40,7 +40,7 @@ export function ProfileScreen() {
     [
       { l: '系统设置', nav: 'Settings' },
       { l: '环境切换', nav: 'EnvPicker' },
-      { l: '关于纺云 ERP', r: 'v2.4.1' },
+      { l: '关于织云 ERP', r: 'v2.4.1' },
     ],
   ];
 

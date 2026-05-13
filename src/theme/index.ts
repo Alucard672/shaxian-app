@@ -1,4 +1,4 @@
-// Design tokens from 纺云 ERP prototype — industrial navy aesthetic
+// Design tokens from 织云 ERP prototype — industrial navy aesthetic
 export const colors = {
   ink900: '#0a1220',
   ink850: '#0e1a2e',
