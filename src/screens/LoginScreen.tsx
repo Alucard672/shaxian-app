@@ -73,11 +73,11 @@ export function LoginScreen() {
               style={styles.logoBox}
               onLongPress={() => nav.navigate('EnvPicker')}
               delayLongPress={700}>
-              <Text style={styles.logoText}>纱</Text>
+              <Text style={styles.logoText}>纺</Text>
             </Pressable>
             <View>
-              <Text style={styles.brandName}>纱线通</Text>
-              <Text style={styles.brandSub}>YARN ERP · v2.4</Text>
+              <Text style={styles.brandName}>纺云 ERP</Text>
+              <Text style={styles.brandSub}>FANGYUN · v2.4</Text>
             </View>
             <View style={{ flex: 1 }} />
             <Pressable style={{ alignItems: 'flex-end' }} onPress={() => nav.navigate('EnvPicker')}>
@@ -104,7 +104,7 @@ export function LoginScreen() {
         style={styles.formWrap}>
         <View style={styles.card}>
           <Text style={styles.tag}>SIGN IN · 账户登录</Text>
-          <Text style={styles.cardTitle}>欢迎使用纱线通</Text>
+          <Text style={styles.cardTitle}>欢迎使用纺云 ERP</Text>
           <Text style={styles.cardSub}>请输入手机号和密码登录系统</Text>
 
           <View style={{ marginTop: 20 }}>
@@ -157,7 +157,7 @@ export function LoginScreen() {
           </Pressable>
 
           <View style={styles.footer}>
-            <Text style={styles.footerText}>© 2025 纱线通</Text>
+            <Text style={styles.footerText}>© 2025 纺云 ERP</Text>
             <Text style={styles.footerText}>·</Text>
             <Text style={styles.footerText}>400-888-6688</Text>
             <Text style={styles.footerText}>·</Text>
