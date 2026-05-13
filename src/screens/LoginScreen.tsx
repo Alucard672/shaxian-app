@@ -14,11 +14,21 @@ import { getCurrentEnv, subscribeEnv } from '@/config/env';
 export function LoginScreen() {
   const nav = useNavigation<any>();
   const setSession = useAuth(s => s.setSession);
-  const [phone, setPhone] = useState('13800138000');
-  const [password, setPassword] = useState('123456');
+  const logoutReason = useAuth(s => s.logoutReason);
+  const clearLogoutReason = useAuth(s => s.clearLogoutReason);
+  const [phone, setPhone] = useState(__DEV__ ? '13800138000' : '');
+  const [password, setPassword] = useState(__DEV__ ? '123456' : '');
   const [loading, setLoading] = useState(false);
   const [env, setEnv] = useState(getCurrentEnv());
   React.useEffect(() => subscribeEnv(() => setEnv(getCurrentEnv())), []);
+
+  // 若是从其它页面被强制登出（顶号 / 到期 / 停用），进入时弹一次提示
+  React.useEffect(() => {
+    if (logoutReason) {
+      Alert.alert('请重新登录', logoutReason);
+      clearLogoutReason();
+    }
+  }, [logoutReason, clearLogoutReason]);
 
   const onLogin = async () => {
     if (!phone || !password) {
@@ -28,9 +38,24 @@ export function LoginScreen() {
     setLoading(true);
     try {
       const session = await login(phone.replace(/\s/g, ''), password);
+      // 移动端只面向租户用户；超管账号请用浏览器进管理后台
+      if (session.superAdmin) {
+        Alert.alert('无法登录', '该账号是平台超级管理员，请使用浏览器访问管理后台');
+        return;
+      }
       await setSession(session);
     } catch (e: any) {
-      Alert.alert('登录失败', e.message ?? '请稍后重试');
+      const msg = e?.message ?? '请稍后重试';
+      // 区分租户停用 / 到期 / 顶号 / 普通失败
+      if (msg.includes('租户已停用')) {
+        Alert.alert('租户已停用', '请联系平台运营');
+      } else if (msg.includes('租户已到期')) {
+        Alert.alert('租户已到期', '请联系平台运营续费');
+      } else if (msg.includes('用户不存在')) {
+        Alert.alert('该手机号未注册', '请联系平台运营开通账号');
+      } else {
+        Alert.alert('登录失败', msg);
+      }
     } finally {
       setLoading(false);
     }
@@ -58,10 +83,10 @@ export function LoginScreen() {
             <Pressable style={{ alignItems: 'flex-end' }} onPress={() => nav.navigate('EnvPicker')}>
               <View style={styles.envPill}>
                 <View style={styles.envDot} />
-                <Text style={styles.envText}>{env.customBase ? '自定义' : env.label}环境</Text>
+                <Text style={styles.envText}>{env.label}环境</Text>
               </View>
               <Text style={styles.statusSub} numberOfLines={1}>
-                {(env.customBase ?? env.apiBase).replace(/^https?:\/\//, '')}
+                {env.apiBase.replace(/^https?:\/\//, '')}
               </Text>
             </Pressable>
           </View>

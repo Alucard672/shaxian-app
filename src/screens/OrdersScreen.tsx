@@ -121,7 +121,7 @@ export function OrdersScreen() {
             const tone = statusTone(item.status);
             const borderColor = tone === 'warn' ? colors.warn : tone === 'ok' ? colors.ok : colors.ink300;
             return (
-              <Pressable onPress={() => Alert.alert('销售单', item.orderNumber)}
+              <Pressable onPress={() => nav.navigate('OrderDetail', { id: item.id })}
                 style={[styles.card, { borderLeftColor: borderColor }]}>
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                   <Text style={styles.orderNo}>{item.orderNumber}</Text>

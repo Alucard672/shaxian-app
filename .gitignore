@@ -2,6 +2,11 @@ node_modules/
 .expo/
 .idea/
 dist/
+
+# Expo prebuild 输出（约 900MB 的原生工程 / 构建缓存）
+android/
+ios/
+
 npm-debug.*
 *.jks
 *.p8

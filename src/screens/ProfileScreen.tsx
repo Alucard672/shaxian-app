@@ -33,13 +33,13 @@ export function ProfileScreen() {
       { l: '新增供应商', nav: 'SupplierForm' },
     ],
     [
+      { l: '员工管理', nav: 'Employees' },
       { l: '打印模板' },
       { l: '库存预警' },
-      { l: '员工管理' },
     ],
     [
+      { l: '系统设置', nav: 'Settings' },
       { l: '环境切换', nav: 'EnvPicker' },
-      { l: '系统设置' },
       { l: '关于纱线通', r: 'v2.4.1' },
     ],
   ];

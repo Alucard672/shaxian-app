@@ -71,3 +71,13 @@ export async function createSalesOrder(
 ) {
   return api<SalesOrder>('/sales', { method: 'POST', body, sessionId, tenantId });
 }
+
+/**
+ * 作废销售单：后端事务处理（还库存 + 冲销关联未收款应收 + 状态置 CANCELLED）。
+ * 已收过款的订单后端会拒绝并返回明确错误（请先冲销收款）。
+ */
+export async function cancelSalesOrder(
+  sessionId: string, tenantId: number, id: number,
+) {
+  return api<SalesOrder>(`/sales/${id}/cancel`, { method: 'POST', sessionId, tenantId });
+}
